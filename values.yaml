@@ -89,7 +89,7 @@ ingress:
       pathType: ImplementationSpecific
   tls: []
 labels:
-  node: k8s09.breeze-blocks.net
+  node: k8s10.breeze-blocks.net
 
 ###
 # ```{rubric} Liveness Probe
@@ -147,7 +147,7 @@ nameOverride: "bitcoin"
 # :end-before: "###\n"
 # ```
 nodeSelector:
-  kubernetes.io/node: k8s09.breeze-blocks.net
+  kubernetes.io/node: k8s10.breeze-blocks.net
 
 ###
 # ```{rubric} Persistence Configuration
