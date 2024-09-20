@@ -2,35 +2,43 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: {{ .Values.nameOverride }}
+  labels:
+    {{- include "bitcoin.labels" . | nindent 4 }}
 spec:
   selector:
     matchLabels:
-      ss.kubernetes.io/name: {{ .Values.nameOverride }}
-      ss.kubernetes.io/instance: {{ .Release.Name }}
+      {{- include "bitcoin.selectorLabels" . | nindent 6 }}
   serviceName: {{ .Values.nameOverride }}
   replicas: {{ .Values.replicaCount }}
-  bitcoin-node:
+  template:
     metadata:
       labels:
-        ss.kubernetes.io/name: {{ .Values.nameOverride }}
-        ss.kubernetes.io/instance: {{ .Release.Name }}
+        {{- include "bitcoin.selectorLabels" . | nindent 8 }}
     spec:
       containers:
-        - name: nginx
+        - name: {{ .Values.nameOverride }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
-            - containerPort: 80
-              name: http
+            - containerPort: 8333
+              name: rest
+            - containerPort: 8334
+              name: rpc
           volumeMounts:
-            - name: nginx
-              mountPath: /etc/nginx
-  volumeClaimbitcoin-nodes:
+            - name: {{ .Values.nameOverride }}
+              mountPath: /srv/bitcoin
+  volumeClaimTemplates:
   - metadata:
-      name: nginx
+      name: {{ .Values.nameOverride }}
+      annotations:
+        {{- include "bitcoin.selectorLabels" . | nindent 8 }}
+        volume.kubernetes.io/selected-node: {{ .Values.labels.node }}
+      labels:
+        {{- include "bitcoin.labels" . | nindent 8 }}
     spec:
-      accessModes: [ "ReadWriteOnce" ]
+      accessModes: [ "ReadWriteMany", "ReadWriteOnce" ]
       resources:
         requests:
           storage: {{ .Values.persistence.size }}
-      storageClassName: csi-driver-lvm-linear
+      storageClassName: csi-lvm-linear
+      volumeMode: Filesystem
