@@ -21,7 +21,7 @@ values:
 # ```{rubric} StatefulSet Tests
 # ```
 # ---
-# Tests for StatefulSet Template
+# Tests for StatefulSet bitcoin-node
 #
 # ```{literalinclude} /tests/statefulset_test.yaml
 # :language: yaml
@@ -33,6 +33,6 @@ tests:
       of: StatefulSet
   - equal:
       path: metadata.name
-      value: template-replace-
+      value: bitcoin-nodereplace-
   it: should be a StatefulSet
 

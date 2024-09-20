@@ -13,8 +13,12 @@ import version_query
 
 def get_release():
     """Query the current release for the project."""
-    repo_path = Path('.')
-    ret_value = version_query.git_query.query_git_repo(repo_path).to_str()
+    try:
+        repo_path = Path('.')
+        ret_value = version_query.git_query.query_git_repo(repo_path).to_str()
+    except ValueError:
+        ret_value = version_query.Version.from_str(
+            '0.0.2').devel_increment().to_str()
     return ret_value
 
 author = 'Xander Harris'
@@ -35,7 +39,7 @@ exclude_patterns = [
     '.venv/*',
     '.tmp/*',
     '.pytest_cache/*',
-    'resources/templates/NOTES.txt',
+    'resources/bitcoin-nodes/NOTES.txt',
 ]
 
 extensions = [
@@ -74,7 +78,7 @@ myst_enable_extensions = [
     "tasklist",
 ]
 myst_title_to_header = True
-project = 'Template Helm Chart'
+project = 'bitcoin-node Helm Chart'
 rst_epilog = """
 .. sectionauthor:: Xander Harris <xandertheharris@gmail.com>
 """
