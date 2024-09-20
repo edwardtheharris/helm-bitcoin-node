@@ -1,15 +1,15 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: "{{ include "postgresql.fullname" . }}-test-connection"
+  name: "{{ include "bitcoin.fullname" . }}-test-connection"
   labels:
-    {{- include "postgresql.labels" . | nindent 4 }}
+    {{- include "bitcoin.labels" . | nindent 4 }}
   annotations:
-    "helm.sh/hook": test
+    helm.sh/hook: test
 spec:
   containers:
     - name: wget
       image: busybox
       command: ['wget']
-      args: ['{{ include "postgresql.fullname" . }}:{{ .Values.service.port }}']
+      args: ['{{ include "bitcoin.fullname" . }}:{{ .Values.service.port }}']
   restartPolicy: Never

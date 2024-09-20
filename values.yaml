@@ -2,7 +2,7 @@
 # ```{rubric} Default Values
 # ```
 # ---
-# Default values for the Helm bitcoin-nodereplace- bitcoin-node.
+# Default values for the Helm bitcoin-node chart.
 #
 # This is a YAML-formatted file.
 #
@@ -25,76 +25,6 @@ affinity:
         - linux
 
 ###
-# ```{rubric} Autoscaling
-# ```
-# ---
-# Configure auto scaling on the cluster.
-#
-# ```{literalinclude} /values.yaml
-# :caption: affinity
-# :language: yaml
-# :start-at: "autoscaling:\n"
-# :end-before: "###\n"
-# ```
-#
-# `targetCPUUtilizationPercentage: 80`{l=yaml}
-#
-# `targetMemoryUtilizationPercentage: 80`{l=yaml}
-autoscaling:
-  enabled: false
-  maxReplicas: 0
-  minReplicas: 0
-
-###
-# ```{rubric} bitcoin-nodereplace- Config
-# ```
-# ---
-# Configure the bitcoin-nodereplace- deployment.
-#
-# ```{literalinclude} /values.yaml
-# :caption: config
-# :language: yaml
-# :start-at: "config:\n"
-# :end-before: "###\n"
-# ```
-config:
-  allowed_hosts: "*"
-  caches_backend: django_redis.cache.RedisCache
-  celery:
-    img:
-      repository: ghcr.io/edwardtheharris/helm-bitcoin-nodereplace-/celery
-      tag: '0.0.1.rc29'
-    broker: 'redis://redis.redis.svc.cluster.local:6379/0'
-    name: celery-config
-    results: 'redis://redis.redis.svc.cluster.local:6379/0'
-    root: '/opt/celery'
-  name: bitcoin-nodereplace--config
-
-###
-# ```{rubric} Database
-# ```
-# ---
-# Configure a relational database connection, MySQL and PostgreSQL are
-# supported.
-#
-# ```{literalinclude} /values.yaml
-# :caption: database
-# :language: yaml
-# :start-at: "database:\n"
-# :end-before: "###\n"
-# ```
-database:
-  database: bitcoin-nodereplace-
-  engine: django.db.backends.postgresql
-  host: postgresql.postgresql.svc.cluster.local
-  name: postgres
-  password: ""
-  port: '5432'
-  secretfile: secrets/secrets.yaml
-  timeout: '300'
-  username: ""
-
-###
 # ```{rubric} Full Name Override
 # ```
 # ---
@@ -103,10 +33,10 @@ database:
 # ```{literalinclude} /values.yaml
 # :caption: fullname override
 # :language: yaml
-# :start-at: "fullnameOverride: \"bitcoin-nodereplace-\"\n"
+# :start-at: "fullnameOverride: \"bitcoin\"\n"
 # :end-before: "###\n"
 # ```
-fullnameOverride: "bitcoin-nodereplace-"
+fullnameOverride: "bitcoin"
 
 ###
 # ```{rubric} Container image settings
@@ -122,27 +52,9 @@ fullnameOverride: "bitcoin-nodereplace-"
 # ```
 image:
   pullPolicy: Always
-  repository: ghcr.io/edwardtheharris/helm-bitcoin-nodereplace-/bitcoin-nodereplace-
+  repository: edwardtheharris/bitcoin-node
   # Overrides the image tag whose default is the chart appVersion.
-  tag: '0.0.1.rc29'
-  secret:
-    name: ghcr
-    data: ''
-
-###
-# ```{rubric} Image Pull Secrets
-# ```
-# ---
-# Secrets required to pull the deployment image.
-#
-# ```{literalinclude} /values.yaml
-# :caption: imagePullSecrets
-# :language: yaml
-# :start-at: "imagePullSecrets:\n"
-# :end-before: "###\n"
-# ```
-imagePullSecrets:
-- name: ghcr
+  tag: '0.0.1'
 
 ###
 # ```{rubric} Ingress
@@ -171,11 +83,13 @@ ingress:
   className: "nginx"
   enabled: true
   hosts:
-  - host: bitcoin-nodereplace-.svc.cluster.local
+  - host: bitcoin.breeze-blocks.net
     paths:
     - path: /
       pathType: ImplementationSpecific
   tls: []
+labels:
+  node: k8s09.breeze-blocks.net
 
 ###
 # ```{rubric} Liveness Probe
@@ -192,7 +106,7 @@ ingress:
 livenessProbe:
   exec:
     command:
-    - /opt/bitcoin-nodereplace-/bin/bitcoin-nodereplace--server
+    - /usr/sbin/bitcoind
     - status
   # When to give up and restart the container
   failureThreshold: 3
@@ -215,10 +129,10 @@ livenessProbe:
 # ```{literalinclude} /values.yaml
 # :caption: name override
 # :language: yaml
-# :start-at: "nameOverride: \"bitcoin-nodereplace-\"\n"
+# :start-at: "nameOverride: \"bitcoin\"\n"
 # :end-before: "###\n"
 # ```
-nameOverride: "bitcoin-nodereplace-"
+nameOverride: "bitcoin"
 
 ###
 # ```{rubric} Node Selector
@@ -233,7 +147,7 @@ nameOverride: "bitcoin-nodereplace-"
 # :end-before: "###\n"
 # ```
 nodeSelector:
-  kubernetes.io/os: linux
+  kubernetes.io/node: k8s09.breeze-blocks.net
 
 ###
 # ```{rubric} Persistence Configuration
@@ -249,10 +163,10 @@ nodeSelector:
 # ```
 persistence:
   claim:
-    enabled: false
-  name: bitcoin-nodereplace-
-  size: 50Gi
-  storageClass: csi-driver-lvm-linear
+    enabled: true
+  name: bitcoin
+  size: 100Gi
+  storageClass: csi-lvm-linear
 
 ###
 # ```{rubric} Pod Annotations
@@ -281,7 +195,7 @@ podAnnotations: {}
 # :end-before: "###\n"
 # ```
 podLabels:
-  app: bitcoin-nodereplace-
+  app.kubernetes.io/name: bitcoin
 
 ###
 # ```{rubric} Pod Security Context
@@ -406,7 +320,7 @@ service:
   type: ClusterIP
   selectorLabels:
     app.kubernetes.io/component: network
-    app.kubernetes.io/name: bitcoin-nodereplace-
+    app.kubernetes.io/name: bitcoin
 
 ###
 # ```{rubric} Service Account
@@ -423,14 +337,14 @@ service:
 serviceAccount:
   # Annotations to add to the service account
   annotations:
-    sa.kubernetes.io/name: bitcoin-nodereplace-
+    sa.kubernetes.io/name: bitcoin
   # Automatically mount a ServiceAccount's API credentials?
   automount: true
   # Specifies whether a service account should be created
   create: true
   # The name of the service account to use.
   # If not set and create is true, a name is generated using the fullname bitcoin-node
-  name: "bitcoin-nodereplace-"
+  name: "bitcoin"
 
 ###
 # ```{rubric} Super User Config
@@ -478,10 +392,10 @@ tolerations: []
 # ```{literalinclude} /values.yaml
 # :caption: type
 # :language: yaml
-# :start-at: "type: Deployment\n"
+# :start-at: "type: StatefulSet\n"
 # :end-before: "###\n"
 # ```
-type: Deployment
+type: StatefulSet
 
 ###
 # ```{rubric} Volume Mounts

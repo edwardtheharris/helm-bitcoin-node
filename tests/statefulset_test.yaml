@@ -33,6 +33,6 @@ tests:
       of: StatefulSet
   - equal:
       path: metadata.name
-      value: bitcoin-nodereplace-
+      value: bitcoin
   it: should be a StatefulSet
 
