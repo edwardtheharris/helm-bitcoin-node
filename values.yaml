@@ -2,11 +2,11 @@
 # ```{rubric} Default Values
 # ```
 # ---
-# Default values for the Helm template-replace- template.
+# Default values for the Helm bitcoin-nodereplace- bitcoin-node.
 #
 # This is a YAML-formatted file.
 #
-# Declare variables to be passed into your templates.
+# Declare variables to be passed into your bitcoin-nodes.
 #
 # ```{literalinclude} /values.yaml
 # :caption: affinity
@@ -46,10 +46,10 @@ autoscaling:
   minReplicas: 0
 
 ###
-# ```{rubric} template-replace- Config
+# ```{rubric} bitcoin-nodereplace- Config
 # ```
 # ---
-# Configure the template-replace- deployment.
+# Configure the bitcoin-nodereplace- deployment.
 #
 # ```{literalinclude} /values.yaml
 # :caption: config
@@ -62,13 +62,13 @@ config:
   caches_backend: django_redis.cache.RedisCache
   celery:
     img:
-      repository: ghcr.io/edwardtheharris/helm-template-replace-/celery
+      repository: ghcr.io/edwardtheharris/helm-bitcoin-nodereplace-/celery
       tag: '0.0.1.rc29'
     broker: 'redis://redis.redis.svc.cluster.local:6379/0'
     name: celery-config
     results: 'redis://redis.redis.svc.cluster.local:6379/0'
     root: '/opt/celery'
-  name: template-replace--config
+  name: bitcoin-nodereplace--config
 
 ###
 # ```{rubric} Database
@@ -84,7 +84,7 @@ config:
 # :end-before: "###\n"
 # ```
 database:
-  database: template-replace-
+  database: bitcoin-nodereplace-
   engine: django.db.backends.postgresql
   host: postgresql.postgresql.svc.cluster.local
   name: postgres
@@ -103,10 +103,10 @@ database:
 # ```{literalinclude} /values.yaml
 # :caption: fullname override
 # :language: yaml
-# :start-at: "fullnameOverride: \"template-replace-\"\n"
+# :start-at: "fullnameOverride: \"bitcoin-nodereplace-\"\n"
 # :end-before: "###\n"
 # ```
-fullnameOverride: "template-replace-"
+fullnameOverride: "bitcoin-nodereplace-"
 
 ###
 # ```{rubric} Container image settings
@@ -122,7 +122,7 @@ fullnameOverride: "template-replace-"
 # ```
 image:
   pullPolicy: Always
-  repository: ghcr.io/edwardtheharris/helm-template-replace-/template-replace-
+  repository: ghcr.io/edwardtheharris/helm-bitcoin-nodereplace-/bitcoin-nodereplace-
   # Overrides the image tag whose default is the chart appVersion.
   tag: '0.0.1.rc29'
   secret:
@@ -171,7 +171,7 @@ ingress:
   className: "nginx"
   enabled: true
   hosts:
-  - host: template-replace-.svc.cluster.local
+  - host: bitcoin-nodereplace-.svc.cluster.local
     paths:
     - path: /
       pathType: ImplementationSpecific
@@ -192,7 +192,7 @@ ingress:
 livenessProbe:
   exec:
     command:
-    - /opt/template-replace-/bin/template-replace--server
+    - /opt/bitcoin-nodereplace-/bin/bitcoin-nodereplace--server
     - status
   # When to give up and restart the container
   failureThreshold: 3
@@ -215,10 +215,10 @@ livenessProbe:
 # ```{literalinclude} /values.yaml
 # :caption: name override
 # :language: yaml
-# :start-at: "nameOverride: \"template-replace-\"\n"
+# :start-at: "nameOverride: \"bitcoin-nodereplace-\"\n"
 # :end-before: "###\n"
 # ```
-nameOverride: "template-replace-"
+nameOverride: "bitcoin-nodereplace-"
 
 ###
 # ```{rubric} Node Selector
@@ -250,7 +250,7 @@ nodeSelector:
 persistence:
   claim:
     enabled: false
-  name: template-replace-
+  name: bitcoin-nodereplace-
   size: 50Gi
   storageClass: csi-driver-lvm-linear
 
@@ -281,7 +281,7 @@ podAnnotations: {}
 # :end-before: "###\n"
 # ```
 podLabels:
-  app: template-replace-
+  app: bitcoin-nodereplace-
 
 ###
 # ```{rubric} Pod Security Context
@@ -406,7 +406,7 @@ service:
   type: ClusterIP
   selectorLabels:
     app.kubernetes.io/component: network
-    app.kubernetes.io/name: template-replace-
+    app.kubernetes.io/name: bitcoin-nodereplace-
 
 ###
 # ```{rubric} Service Account
@@ -423,14 +423,14 @@ service:
 serviceAccount:
   # Annotations to add to the service account
   annotations:
-    sa.kubernetes.io/name: template-replace-
+    sa.kubernetes.io/name: bitcoin-nodereplace-
   # Automatically mount a ServiceAccount's API credentials?
   automount: true
   # Specifies whether a service account should be created
   create: true
   # The name of the service account to use.
-  # If not set and create is true, a name is generated using the fullname template
-  name: "template-replace-"
+  # If not set and create is true, a name is generated using the fullname bitcoin-node
+  name: "bitcoin-nodereplace-"
 
 ###
 # ```{rubric} Super User Config
@@ -446,7 +446,7 @@ serviceAccount:
 # ```
 superUser:
   create: true
-  email: template-replace-@template-replace-.svc.cluster.local
+  email: bitcoin-nodereplace-@bitcoin-nodereplace-.svc.cluster.local
   name: nb-admin
   password: ""
   secret:

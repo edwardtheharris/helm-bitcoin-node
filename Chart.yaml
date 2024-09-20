@@ -64,10 +64,10 @@ icon: file://./_static/img/logo/helm.png
 #
 # ```{literalinclude} /Chart.yaml
 # :language: yaml
-# :start-at: "name: template\n"
+# :start-at: "name: bitcoin-node\n"
 # :end-before: "###\n"
 # ```
-name: template
+name: bitcoin-node
 
 ###
 # ```{rubric} Type
@@ -75,12 +75,12 @@ name: template
 # ---
 # A chart can be either an 'application' or a 'library' chart.
 #
-# Application charts are a collection of templates that can be packaged into versioned archives
+# Application charts are a collection of bitcoin-nodes that can be packaged into versioned archives
 # to be deployed.
 #
 # Library charts provide useful utilities or functions for the chart developer. They're included as
 # a dependency of application charts to inject those utilities and functions into the rendering
-# pipeline. Library charts do not define any templates and therefore cannot be deployed.
+# pipeline. Library charts do not define any bitcoin-nodes and therefore cannot be deployed.
 #
 # ```{literalinclude} /Chart.yaml
 # :language: yaml
@@ -94,7 +94,7 @@ type: application
 # ```
 # ---
 # This is the chart version. This version number should be incremented each time you make changes
-# to the chart and its templates, including the app version.
+# to the chart and its bitcoin-nodes, including the app version.
 # Versions are expected to follow Semantic Versioning (https://semver.org/)
 #
 # ```{literalinclude} /Chart.yaml
