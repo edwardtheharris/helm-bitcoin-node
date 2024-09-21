@@ -24,3 +24,5 @@
 _build/
 .venv/
 .gnupg/
+reflog
+test.yaml

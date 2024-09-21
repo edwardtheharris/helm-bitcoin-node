@@ -11,5 +11,5 @@ spec:
     - name: wget
       image: busybox
       command: ['wget']
-      args: ['{{ include "bitcoin.fullname" . }}:{{ .Values.service.port }}']
+      args: ['bitcoin.bitcoin.svc.cluster.local:8333']
   restartPolicy: Never

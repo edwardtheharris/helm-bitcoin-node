@@ -25,10 +25,10 @@ apiVersion: v2
 #
 # ```{literalinclude} /Chart.yaml
 # :language: yaml
-# :start-at: "appVersion: \"0.0.1\"\n"
+# :start-at: "appVersion: \"27.1.0\"\n"
 # :end-before: "###\n"
 # ```
-appVersion: "0.0.1"
+appVersion: "27.1.0"
 
 ###
 # ```{rubric} Description
@@ -38,10 +38,10 @@ appVersion: "0.0.1"
 #
 # ```{literalinclude} /Chart.yaml
 # :language: yaml
-# :start-at: "description: A Helm chart to deploy resources to bare metal Kubernetes.\n"
+# :start-at: "description: A Helm chart for deploying a full Bitcoin node to bare metal Kubernetes.\n"
 # :end-before: "###\n"
 # ```
-description: A Helm chart to deploy resources to bare metal Kubernetes.
+description: A Helm chart for deploying a full Bitcoin node to bare metal Kubernetes.
 
 ###
 # ```{rubric} Icon
@@ -51,10 +51,10 @@ description: A Helm chart to deploy resources to bare metal Kubernetes.
 #
 # ```{literalinclude} /Chart.yaml
 # :language: yaml
-# :start-at: "icon: file://./_static/img/logo/helm.png\n"
+# :start-at: "icon: file://./_static/img/logo/bitcoin.png\n"
 # :end-before: "###\n"
 # ```
-icon: file://./_static/img/logo/helm.png
+icon: file://./_static/img/logo/bitcoin.png
 
 ###
 # ```{rubric} Name
@@ -64,10 +64,10 @@ icon: file://./_static/img/logo/helm.png
 #
 # ```{literalinclude} /Chart.yaml
 # :language: yaml
-# :start-at: "name: bitcoin-node\n"
+# :start-at: "name: bitcoin\n"
 # :end-before: "###\n"
 # ```
-name: bitcoin-node
+name: bitcoin
 
 ###
 # ```{rubric} Type
