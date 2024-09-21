@@ -7,13 +7,15 @@ metadata:
 spec:
   type: {{ .Values.service.type }}
   ports:
-    - port: 8333
-      targetPort: 8333
-      protocol: TCP
-      name: rest
-    - port: 8334
-      targetPort: 8334
-      protocol: TCP
-      name: rpc
+    - port: {{ .Values.service.rest.port }}
+      targetPort: {{ .Values.service.rest.targetPort }}
+      protocol: {{ .Values.service.rest.protocol }}
+      name: {{ .Values.service.rest.name }}
+{{- if .Values.service.rpc.enabled }}
+    - port: {{ .Values.service.rpc.port }}
+      targetPort: {{ .Values.service.rpc.targetPort }}
+      protocol: {{ .Values.service.rpc.protocol }}
+      name: {{ .Values.service.rpc.name }}
+{{- end }}
   selector:
     {{- include "bitcoin.selectorLabels" . | nindent 4 }}
