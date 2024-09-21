@@ -19,6 +19,12 @@ Deploy a Bitcoin node to Kubernetes.
 ## Usage
 
 1. Edit `values.yaml` as required.
+
+   You should have either the
+   [csi-driver-lvm](https://github.com/metal-stack/csi-driver-lvm) installed
+   on your cluster, or update the persistence settings to use some other
+   form of persistent storage.
+
 2. Create a namespace.
 
    ```sh
