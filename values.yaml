@@ -77,16 +77,22 @@ image:
 #      - chart-example.local
 # ```
 ingress:
-  annotations:
-    kubernetes.io/ingress.class: nginx
-    # kubernetes.io/tls-acme: "true"
-  className: "nginx"
+  annotations: {}
+  className: nginx
   enabled: true
+  externalIPs: []
   hosts:
   - host: bitcoin.breeze-blocks.net
     paths:
     - path: /
-      pathType: ImplementationSpecific
+      pathType: Prefix
+      port: 8333
+      serviceName: bitcoin
+  loadBalancerIP: ''
+  secret:
+    enabled: false
+    crt: ''
+    key: ''
   tls: []
 labels:
   node: k8s10.breeze-blocks.net
@@ -165,7 +171,9 @@ persistence:
   claim:
     enabled: true
   name: bitcoin
-  size: 100Gi
+  storage:
+    request: 500Gi
+    limit: 900Gi
   storageClass: csi-lvm-linear
 
 ###
@@ -315,12 +323,18 @@ securityContext: {}
 # ```
 service:
   enabled: true
-  port: 8000
-  targetPort: 8000
-  type: ClusterIP
-  selectorLabels:
-    app.kubernetes.io/component: network
-    app.kubernetes.io/name: bitcoin
+  rest:
+    name: rest
+    port: 8333
+    protocol: TCP
+    targetPort: 8333
+  rpc:
+    enabled: true
+    name: rpc
+    port: 8334
+    protocol: TCP
+    targetPort: 8334
+  type: LoadBalancer
 
 ###
 # ```{rubric} Service Account
@@ -337,7 +351,8 @@ service:
 serviceAccount:
   # Annotations to add to the service account
   annotations:
-    sa.kubernetes.io/name: bitcoin
+    app.kubernetes.io/name: bitcoin
+    app.kubernetes.io/instance: bitcoin
   # Automatically mount a ServiceAccount's API credentials?
   automount: true
   # Specifies whether a service account should be created
@@ -345,29 +360,8 @@ serviceAccount:
   # The name of the service account to use.
   # If not set and create is true, a name is generated using the fullname bitcoin-node
   name: "bitcoin"
-
-###
-# ```{rubric} Super User Config
-# ```
-# ---
-# When enabled, will create a super user account during deployment.
-#
-# ```{literalinclude} /values.yaml
-# :caption: superUser
-# :language: yaml
-# :start-at: "superUser:\n"
-# :end-before: "###\n"
-# ```
-superUser:
-  create: true
-  email: bitcoin-nodereplace-@bitcoin-nodereplace-.svc.cluster.local
-  name: nb-admin
-  password: ""
-  secret:
-    name: secret.superuser
-  secretKey: '57evlrs^0pmu5#ys=9t6==lf6hdz&amp;$1)qq-(%f1noo_b+nsy@f'
-  token: ""
-  username: ""
+statefulset:
+  replicas: 1
 
 ###
 # ```{rubric} Tolerations

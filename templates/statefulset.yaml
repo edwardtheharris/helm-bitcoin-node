@@ -20,10 +20,12 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
-            - containerPort: 8333
-              name: rest
-            - containerPort: 8334
-              name: rpc
+            - containerPort: {{ .Values.service.rest.port }}
+              name: {{ .Values.service.rest.name }}
+            {{- if .Values.service.rpc.enabled }}
+            - containerPort: {{ .Values.service.rpc.port }}
+              name: {{ .Values.service.rpc.name }}
+            {{- end }}
           volumeMounts:
             - name: {{ .Values.nameOverride }}
               mountPath: /srv/bitcoin
@@ -38,7 +40,9 @@ spec:
     spec:
       accessModes: [ "ReadWriteMany", "ReadWriteOnce" ]
       resources:
+        limits:
+          storage: {{ .Values.persistence.storage.limit }}
         requests:
-          storage: {{ .Values.persistence.size }}
+          storage: {{ .Values.persistence.storage.request }}
       storageClassName: csi-lvm-linear
       volumeMode: Filesystem
