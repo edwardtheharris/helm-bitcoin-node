@@ -1,0 +1,72 @@
+###
+# ```{rubric} Service Test Suite
+# ```
+# ---
+# Tests to validate the deployment of the described Service.
+#
+# ```{literalinclude} /tests/service_test.yaml
+# :caption: tests/service_test.yaml#suite
+# :language: yaml
+# :start-at: "suite: service\n"
+# :end-before: "###\n"
+# ```
+suite: service
+templates:
+- templates/service.yaml
+release:
+  name: bitcoin
+values:
+- ../values.yaml
+
+###
+# ```{rubric} Service Tests
+# ```
+# ---
+# Tests for Service Template
+#
+# ```{literalinclude} /tests/service_test.yaml
+# :caption: tests/service_test.yaml#tests
+# :language: yaml
+# :start-at: "tests:\n"
+# ```
+tests:
+- it: Should create a Service named 'bitcoin' with correct metadata
+  asserts:
+  - equal:
+      path: metadata.name
+      value: bitcoin
+  - equal:
+      path: metadata.labels
+      value:
+        helm.sh/chart: bitcoin-0.0.1
+        app.kubernetes.io/name: bitcoin
+        app.kubernetes.io/instance: bitcoin
+        kubernetes.io/hostname: k8s10.breeze-blocks.net
+        app.kubernetes.io/version: "27.1.0"
+        app.kubernetes.io/managed-by: Helm
+
+- it: Should configure the Service as a LoadBalancer with correct ports
+  asserts:
+  - equal:
+      path: spec.type
+      value: LoadBalancer
+  - equal:
+      path: spec.ports
+      value:
+      - port: 8333
+        targetPort: 8333
+        protocol: TCP
+        name: rest
+      - port: 8334
+        targetPort: 8334
+        protocol: TCP
+        name: rpc
+
+- it: Should configure correct selectors for the Service
+  asserts:
+  - equal:
+      path: spec.selector
+      value:
+        app.kubernetes.io/name: bitcoin
+        app.kubernetes.io/instance: bitcoin
+        kubernetes.io/hostname: k8s10.breeze-blocks.net

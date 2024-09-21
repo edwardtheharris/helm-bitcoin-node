@@ -29,6 +29,26 @@ title: Unit Tests
 
 This provides the following suites.
 
+### Helm Test Suite
+
+```{autoyaml} tests/helmtest_test.yaml
+```
+
+### Ingress Suite
+
+```{autoyaml} tests/ingress_test.yaml
+```
+
+### Service Suite
+
+```{autoyaml} tests/service_test.yaml
+```
+
+### Service Account Suite
+
+```{autoyaml} tests/serviceaccount_test.yaml
+```
+
 ### StatefulSet Suite
 
 ```{autoyaml} tests/statefulset_test.yaml
