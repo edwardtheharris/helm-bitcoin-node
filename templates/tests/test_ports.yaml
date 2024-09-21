@@ -1,0 +1,33 @@
+###
+# ```{rubric} Integration Tests
+# ```
+# ---
+# Test the deployed service ports.
+#
+# ```{literalinclude} /templates/tests/test_ports.yaml
+# :language: yaml
+# :caption: templates/tests/test_ports.yaml
+# :start-at: "apiVersion: v1\n"
+# ```
+#
+# Source: templates/tests/test_ports.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: bitcoin-ports-test
+  annotations:
+    "helm.sh/hook": test
+    "helm.sh/hook-delete-policy": hook-succeeded
+spec:
+  containers:
+  - name: netcat
+    image: busybox:1.31.1
+    command: ["/bin/sh", "-c"]
+    args:
+      - >
+        nc -zv bitcoin.bitcoin.svc.cluster.local 8333
+        && echo "Port 8333 is open" || echo "Port 8333 is closed";
+        nc -zv bitcoin.bitcoin.svc.cluster.local 8334
+        && echo "Port 8334 is open" || echo "Port 8334 is closed";
+    # Optionally you can add a restart policy if needed
+  restartPolicy: Never

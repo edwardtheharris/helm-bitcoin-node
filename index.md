@@ -31,6 +31,7 @@ containerizing the Bitcoin node.
 :caption: contents
 
 docker/index
+templates/tests/index
 tests/index
 ```
 

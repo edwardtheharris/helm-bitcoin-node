@@ -5,15 +5,16 @@
 # Tests to validate the deployment of the described StatefulSet.
 #
 # ```{literalinclude} /tests/statefulset_test.yaml
+# :caption: tests/statefulset_test.yaml#suite
 # :language: yaml
-# :start-at: "suite: test for statefulset\n"
+# :start-at: "suite: statefulset\n"
 # :end-before: "###\n"
 # ```
-suite: test for statefulset
-release:
-  name: chart
+suite: statefulset
 templates:
 - templates/statefulset.yaml
+release:
+  name: bitcoin
 values:
 - ../values.yaml
 
@@ -21,18 +22,107 @@ values:
 # ```{rubric} StatefulSet Tests
 # ```
 # ---
-# Tests for StatefulSet bitcoin-node
+# Tests for StatefulSet Template
 #
 # ```{literalinclude} /tests/statefulset_test.yaml
+# :caption: tests/statefulset_test.yaml#tests
 # :language: yaml
 # :start-at: "tests:\n"
 # ```
 tests:
-- asserts:
-  - isKind:
-      of: StatefulSet
+- it: Should create a StatefulSet named 'bitcoin' with correct metadata
+  asserts:
   - equal:
       path: metadata.name
       value: bitcoin
-  it: should be a StatefulSet
+  - equal:
+      path: metadata.labels
+      value:
+        helm.sh/chart: bitcoin-0.0.1
+        app.kubernetes.io/name: bitcoin
+        app.kubernetes.io/instance: bitcoin
+        kubernetes.io/hostname: k8s10.breeze-blocks.net
+        app.kubernetes.io/version: "27.1.0"
+        app.kubernetes.io/managed-by: Helm
 
+- it: Should have correct selector and matchLabels
+  asserts:
+  - equal:
+      path: spec.selector.matchLabels
+      value:
+        app.kubernetes.io/name: bitcoin
+        app.kubernetes.io/instance: bitcoin
+        kubernetes.io/hostname: k8s10.breeze-blocks.net
+
+- it: Should configure the Pod template metadata and labels correctly
+  asserts:
+  - equal:
+      path: spec.template.metadata.labels
+      value:
+        app.kubernetes.io/name: bitcoin
+        app.kubernetes.io/instance: bitcoin
+        kubernetes.io/hostname: k8s10.breeze-blocks.net
+
+- it: Should create the correct container configuration
+  asserts:
+  - equal:
+      path: spec.template.spec.containers[0].name
+      value: bitcoin
+  - equal:
+      path: spec.template.spec.containers[0].image
+      value: edwardtheharris/bitcoin-node:0.0.1
+  - equal:
+      path: spec.template.spec.containers[0].imagePullPolicy
+      value: Always
+  - equal:
+      path: spec.template.spec.containers[0].ports
+      value:
+      - containerPort: 8333
+        name: rest
+      - containerPort: 8334
+        name: rpc
+  - equal:
+      path: spec.template.spec.containers[0].volumeMounts[0].name
+      value: bitcoin
+  - equal:
+      path: spec.template.spec.containers[0].volumeMounts[0].mountPath
+      value: /srv/bitcoin
+
+- it: Should define volumeClaimTemplates with correct storage settings
+  asserts:
+  - equal:
+      path: spec.volumeClaimTemplates[0].metadata.name
+      value: bitcoin
+  - equal:
+      path: spec.volumeClaimTemplates[0].metadata.annotations
+      value:
+        app.kubernetes.io/name: bitcoin
+        app.kubernetes.io/instance: bitcoin
+        kubernetes.io/hostname: k8s10.breeze-blocks.net
+        volume.kubernetes.io/selected-node: k8s10.breeze-blocks.net
+  - equal:
+      path: spec.volumeClaimTemplates[0].metadata.labels
+      value:
+        helm.sh/chart: bitcoin-0.0.1
+        app.kubernetes.io/name: bitcoin
+        app.kubernetes.io/instance: bitcoin
+        kubernetes.io/hostname: k8s10.breeze-blocks.net
+        app.kubernetes.io/version: "27.1.0"
+        app.kubernetes.io/managed-by: Helm
+  - equal:
+      path: spec.volumeClaimTemplates[0].spec.accessModes
+      value:
+      - ReadWriteMany
+      - ReadWriteOnce
+  - equal:
+      path: spec.volumeClaimTemplates[0].spec.resources.requests.storage
+      value: "500Gi"
+  - equal:
+      path: spec.volumeClaimTemplates[0].spec.resources.limits.storage
+      value: "900Gi"
+  - equal:
+      path: spec.volumeClaimTemplates[0].spec.storageClassName
+      value: csi-lvm-linear
+  - equal:
+      path: spec.volumeClaimTemplates[0].spec.volumeMode
+      value: Filesystem

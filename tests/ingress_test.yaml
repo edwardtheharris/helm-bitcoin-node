@@ -1,0 +1,70 @@
+###
+# ```{rubric} Ingress Test Suite
+# ```
+# ---
+# Tests to validate the deployment of the described Ingress for the Bitcoin service.
+#
+# ```{literalinclude} /tests/ingress_test.yaml
+# :caption: tests/ingress_test.yaml#suite
+# :language: yaml
+# :start-at: "suite: ingress\n"
+# :end-before: "###\n"
+# ```
+suite: ingress
+templates:
+- templates/ingress.yaml
+release:
+  name: bitcoin
+values:
+- ../values.yaml
+
+###
+# ```{rubric} Ingress Tests
+# ```
+# ---
+# Tests for Ingress Template to ensure correct setup for Bitcoin service.
+#
+# ```{literalinclude} /tests/ingress_test.yaml
+# :caption: tests/ingress_test.yaml#tests
+# :language: yaml
+# :start-at: "tests:\n"
+# ```
+tests:
+- it: Should create an Ingress named 'bitcoin' with correct metadata
+  asserts:
+  - equal:
+      path: metadata.name
+      value: bitcoin
+  - equal:
+      path: metadata.labels
+      value:
+        helm.sh/chart: bitcoin-0.0.1
+        app.kubernetes.io/name: bitcoin
+        app.kubernetes.io/instance: bitcoin
+        kubernetes.io/hostname: k8s10.breeze-blocks.net
+        app.kubernetes.io/version: "27.1.0"
+        app.kubernetes.io/managed-by: Helm
+
+- it: Should configure the correct ingressClassName
+  asserts:
+  - equal:
+      path: spec.ingressClassName
+      value: nginx
+
+- it: Should configure the correct host and rules for the Ingress
+  asserts:
+  - equal:
+      path: spec.rules[0].host
+      value: bitcoin.breeze-blocks.net
+  - equal:
+      path: spec.rules[0].http.paths[0].path
+      value: /
+  - equal:
+      path: spec.rules[0].http.paths[0].pathType
+      value: Prefix
+  - equal:
+      path: spec.rules[0].http.paths[0].backend.service.name
+      value: bitcoin
+  - equal:
+      path: spec.rules[0].http.paths[0].backend.service.port.number
+      value: 8333
