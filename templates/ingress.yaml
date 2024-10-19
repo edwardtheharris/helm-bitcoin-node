@@ -13,7 +13,7 @@ apiVersion: extensions/v1beta1
 {{- end }}
 kind: Ingress
 metadata:
-  name: {{ .Values.nameOverride }}
+  name: {{ .Release.Name }}
   labels:
     {{- include "bitcoin.labels" . | nindent 4 }}
   {{- with .Values.ingress.annotations }}

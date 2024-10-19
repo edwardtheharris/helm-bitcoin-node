@@ -38,12 +38,12 @@ tests:
   - equal:
       path: metadata.labels
       value:
-        helm.sh/chart: bitcoin-0.0.1
-        app.kubernetes.io/name: bitcoin
         app.kubernetes.io/instance: bitcoin
-        kubernetes.io/hostname: k8s10.breeze-blocks.net
-        app.kubernetes.io/version: "27.1.0"
         app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/name: bitcoin
+        app.kubernetes.io/version: 27.1.0
+        helm.sh/chart: bitcoin-0.0.2
+        kubernetes.io/hostname: k8s10.breeze-blocks.net
 
 - it: Should configure the correct ingressClassName
   asserts:
