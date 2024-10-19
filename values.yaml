@@ -1,18 +1,4 @@
 ###
-# ```{rubric} Full Name Override
-# ```
-# ---
-# Override the full name of the release.
-#
-# ```{literalinclude} /values.yaml
-# :caption: fullname override
-# :language: yaml
-# :start-at: "fullnameOverride: \"bitcoin\"\n"
-# :end-before: "###\n"
-# ```
-fullnameOverride: "bitcoin"
-
-###
 # ```{rubric} Container image settings
 # ```
 # ---
@@ -25,11 +11,13 @@ fullnameOverride: "bitcoin"
 # of the Chart.
 #
 # ```{literalinclude} /values.yaml
-# :caption: image
+# :caption: certmanager
 # :language: yaml
-# :start-at: "image:\n"
+# :start-at: "certmanager:\n"
 # :end-before: "###\n"
 # ```
+certmanager:
+  enabled: true
 image:
   pullPolicy: Always
   repository: edwardtheharris/bitcoin-node
@@ -76,19 +64,6 @@ ingress:
 labels:
   node: k8s10.breeze-blocks.net
 
-###
-# ```{rubric} Name Override
-# ```
-# ---
-# Override the release name, but not quite all the way.
-#
-# ```{literalinclude} /values.yaml
-# :caption: name override
-# :language: yaml
-# :start-at: "nameOverride: \"bitcoin\"\n"
-# :end-before: "###\n"
-# ```
-nameOverride: "bitcoin"
 
 ###
 # ```{rubric} Node Selector
@@ -122,8 +97,8 @@ persistence:
     enabled: true
   name: bitcoin
   storage:
-    request: 500Gi
-    limit: 900Gi
+    requests: 900Gi
+    limits: 900Gi
   storageClass: csi-lvm-linear
 
 ###
@@ -171,11 +146,11 @@ replicaCount: 1
 # ```
 resources:
   limits:
+    cpu: 4
+    memory: 6144Mi
+  requests:
     cpu: 2
     memory: 4096Mi
-  requests:
-    cpu: 1
-    memory: 2048Mi
 
 ###
 # ```{rubric} Service
@@ -213,6 +188,9 @@ service:
     protocol: TCP
     targetPort: 8334
   type: LoadBalancer
+  loadBalancerIP: 192.168.5.5
+  externalIPs:
+    - 192.168.5.20
 
 ###
 # ```{rubric} Service Account

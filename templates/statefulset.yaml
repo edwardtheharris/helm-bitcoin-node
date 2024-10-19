@@ -1,14 +1,14 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: {{ .Values.nameOverride }}
+  name: {{ .Release.Name }}
   labels:
     {{- include "bitcoin.labels" . | nindent 4 }}
 spec:
   selector:
     matchLabels:
       {{- include "bitcoin.selectorLabels" . | nindent 6 }}
-  serviceName: {{ .Values.nameOverride }}
+  serviceName: {{ .Release.Name }}
   replicas: {{ .Values.replicaCount }}
   template:
     metadata:
@@ -16,7 +16,7 @@ spec:
         {{- include "bitcoin.selectorLabels" . | nindent 8 }}
     spec:
       containers:
-        - name: {{ .Values.nameOverride }}
+        - name: {{ .Release.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
@@ -27,7 +27,7 @@ spec:
               name: {{ .Values.service.rpc.name }}
             {{- end }}
           volumeMounts:
-            - name: {{ .Values.nameOverride }}
+            - name: {{ .Release.Name }}
               mountPath: /srv/bitcoin
           resources:
             limits:
@@ -39,7 +39,7 @@ spec:
       serviceAccountName: {{ .Values.serviceAccount.name }}
   volumeClaimTemplates:
   - metadata:
-      name: {{ .Values.nameOverride }}
+      name: {{ .Release.Name }}
       annotations:
         {{- include "bitcoin.selectorLabels" . | nindent 8 }}
         volume.kubernetes.io/selected-node: {{ .Values.labels.node }}
@@ -49,8 +49,8 @@ spec:
       accessModes: [ "ReadWriteMany", "ReadWriteOnce" ]
       resources:
         limits:
-          storage: {{ .Values.persistence.storage.limit }}
+          storage: {{ .Values.persistence.storage.limits }}
         requests:
-          storage: {{ .Values.persistence.storage.request }}
+          storage: {{ .Values.persistence.storage.requests }}
       storageClassName: csi-lvm-linear
       volumeMode: Filesystem

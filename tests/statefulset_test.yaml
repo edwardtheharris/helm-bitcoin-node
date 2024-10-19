@@ -38,12 +38,12 @@ tests:
   - equal:
       path: metadata.labels
       value:
-        helm.sh/chart: bitcoin-0.0.1
-        app.kubernetes.io/name: bitcoin
         app.kubernetes.io/instance: bitcoin
-        kubernetes.io/hostname: k8s10.breeze-blocks.net
-        app.kubernetes.io/version: "27.1.0"
         app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/name: bitcoin
+        app.kubernetes.io/version: 27.1.0
+        helm.sh/chart: bitcoin-0.0.2
+        kubernetes.io/hostname: k8s10.breeze-blocks.net
 
 - it: Should have correct selector and matchLabels
   asserts:
@@ -89,6 +89,10 @@ tests:
       value: /srv/bitcoin
 
 - it: Should define volumeClaimTemplates with correct storage settings
+  set:
+    persistence:
+      storage:
+        requests: 500Gi
   asserts:
   - equal:
       path: spec.volumeClaimTemplates[0].metadata.name
@@ -103,12 +107,12 @@ tests:
   - equal:
       path: spec.volumeClaimTemplates[0].metadata.labels
       value:
-        helm.sh/chart: bitcoin-0.0.1
-        app.kubernetes.io/name: bitcoin
         app.kubernetes.io/instance: bitcoin
-        kubernetes.io/hostname: k8s10.breeze-blocks.net
-        app.kubernetes.io/version: "27.1.0"
         app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/name: bitcoin
+        app.kubernetes.io/version: 27.1.0
+        helm.sh/chart: bitcoin-0.0.2
+        kubernetes.io/hostname: k8s10.breeze-blocks.net
   - equal:
       path: spec.volumeClaimTemplates[0].spec.accessModes
       value:
